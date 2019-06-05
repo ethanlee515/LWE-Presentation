@@ -13,12 +13,15 @@
 	\frametitle{Motivation}
 	\begin{itemize}[<+->]
 		\item Originally as an attempt to solve lattice problems
-		\item RSA broken by Shor's algorithm
+		\item Worst-case lattice problems reduce to LWE
+		\item Need new encryption schemes that are at least as hard to
+			break as problems difficult for quantum computers
+		\item LWE fits the bill
 	\end{itemize}
 }
 
 \frame{
-	\frametitle{Intuition}
+	\frametitle{Intuition of LWE}
 	$$14s_1+15s_2+5s_3+2s_4\approx8\pmod{17}$$
 	$$13s_1+14s_2+14s_3+6s_4\approx16\pmod{17}$$
 	$$6s_1+10s_2+13s_3+s_4\approx3\pmod{17}$$
@@ -30,7 +33,7 @@
 }
 
 \frame{
-	\frametitle{Definition}
+	\frametitle{Definition (LWE Distribution)}
 	Let $A_{\vec{s}, \chi}$ be a distribution on
 	$\mathbb{Z}^n_q\times\mathbb{Z}_q$ as follows:
 	\pause
@@ -42,45 +45,111 @@
 }
 
 \frame{
-	\frametitle{Search vs. Decision}
+	\frametitle{Definition (LWE)}
+	Given samples from $A_{\vec{s}, \chi}$,
+	\begin{itemize}[<+->]
+		\item Search version: Find $\vec{s}$.
+		\item Decision version: Distinguish between $A_{\vec{s}, \chi}$
+			and the uniform distribution.
+	\end{itemize}
+}
+
+
+\frame{
+	\frametitle{Search to decision reduction}
 
 
 }
 
 \frame{
-	\frametitle{Assymetric cryptography}
-	$\textnormal{Enc}$ and $\textnormal{Dec}$ are separate functions,
-	each parametrized by a key.
-	
-	For a valid key pair $(pk, sk)$,
-	$\textnormal{Dec}_{sk}^{-1} = \textnormal{Enc}_{pk}$.
+	\frametitle{Asymmetric cryptography}
+	Two parties who may have never communicated before may securely
+	exchange information, by using the tools below:
+	\pause
+	\begin{itemize}[<+->]
+		\item $pk$: ``public key", used for encryption
+		\item $\textnormal{Enc}_{pk}:\Sigma^*\times\mathcal{R}\rightarrow U$
+		\item $sk$: ``secret key", used for decryption
+		\item $\textnormal{Dec}_{sk}:U\rightarrow\Sigma^*$
+		\item $\textnormal{Dec}_{sk}\circ\textnormal{Enc}_{pk}(x, r)=x$
+			with overwhelming probability over $r$
+	\end{itemize}
+}
 
-
+\frame{
+	Typical use of such a scheme:
+	\frametitle{Asymmetric cryptography cont.}
 	\begin{enumerate}[<+->]
-		\item Alice generates "public key" and "secret key"
-		\item Alice sends the public key to Bob
-		\item Bob encrypts the message using public key
+		\item Alice generates $(pk, sk)$
+		\item Alice sends $pk$ to Bob
+		\item Bob encrypts his message using $pk$
 		\item Bob sends the ciphertext to Alice
-		\item Alice decrypts it using the secret key.
+		\item Alice decrypts it using $sk$
 	\end{enumerate}
 }
 
 \frame{
 	\frametitle{Safety}
-	\begin{itemize}
-		\item CPA
-		\item CCA1
-		\item CCA2
+	What does it mean for an encryption scheme to be ``safe"?
+	\pause
+	\begin{itemize}[<+->]
+		\item Chosen plaintext attack (CPA): The "intuitive" definition.
+			An (efficient) adversary who's able to encrypt anything shouldn't
+			be able to decrypt anything.
+		\item Adaptive chosen-ciphertext attack (CCA2):
+			A stronger definition. An (efficient) adversary who's able to
+			decrypt anything but the target, still cannot decrypt the target.
 	\end{itemize}
 }
 
 \frame{
-	\frametitle{Malleability}
-
+	\frametitle{Safety (Malleability)}
+	A cryptographic scheme is malleable if
+	$\exists f:\Sigma^*\rightarrow\Sigma^*$ efficiently invertible,
+	an entity given $pk$ and $\textnormal{Enc}_{pk}(x)$
+	can evaluate $\textnormal{Enc}_{pk}(f(x))$.
+	\pause
+	\begin{itemize}[<+->]
+		\item CCA2 implies non-malleability
+		\item Has many flavors (malleable under CPA vs CCA)
+		\item Is this always a bad property to have?
+	\end{itemize}
 }
 
 \frame{
 	\frametitle{Homomorphic encryption}
+	Let someone else do the computation for you.
+	Useful when that ``someone else" is quantum!
+	\pause
+	\begin{enumerate}[<+->]
+		\item Alice generates $(pk, sk, evk)$
+		\item Alice encrypts her message using $pk$
+		\item Alice sends $evk$ and the ciphertext to Bob
+		\item Bob runs computations on the ciphertext
+		\item Bob sends the encrypted result back to Alice
+		\item Alice decrypts it using $sk$.
+	\end{enumerate}
+}
+
+\frame{
+	\frametitle{GSW idea}
+	Intuitive idea as follows:
+	\begin{itemize}[<+->]
+		\item private key $\vec{v}$ is a vector
+		\item ciphertexts are matrices with $\vec{v}$ approximately as an
+			eigenvector
+		\item plaintexts are corresponding eigenvalues
+		\item $(C_1+C_2)\vec{v}\approx(\lambda_1+\lambda_2)\vec{v}$
+		\item $(C_1C_2)\vec{v}\approx(\lambda_1\lambda_2)\vec{v}$
+		\item When plaintexts are booleans, $I_N-C_1C_2$ encodes NAND.
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{Bitdecomp}
+	A tool that GSW use.
+	$\textnormal{BitDecomp}^{-1}$
+	
 	
 
 
