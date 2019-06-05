@@ -97,7 +97,7 @@
 			An (efficient) adversary who's able to encrypt anything shouldn't
 			be able to decrypt anything.
 		\item Adaptive chosen-ciphertext attack (CCA2):
-			A stronger definition. An (efficient) adversary who's able to
+			A stronger definition. An (efficient) adversary who's also able to
 			decrypt anything but the target, still cannot decrypt the target.
 	\end{itemize}
 }
@@ -132,13 +132,13 @@
 }
 
 \frame{
-	\frametitle{GSW idea}
+	\frametitle{Idea of GSW's homomorphic encryption}
 	Intuitive idea as follows:
 	\begin{itemize}[<+->]
 		\item private key $\vec{v}$ is a vector
 		\item ciphertexts are matrices with $\vec{v}$ approximately as an
 			eigenvector
-		\item plaintexts are corresponding eigenvalues
+		\item plaintexts are corresponding approximate eigenvalues
 		\item $(C_1+C_2)\vec{v}\approx(\lambda_1+\lambda_2)\vec{v}$
 		\item $(C_1C_2)\vec{v}\approx(\lambda_1\lambda_2)\vec{v}$
 		\item When plaintexts are booleans, $I_N-C_1C_2$ encodes NAND.
@@ -146,13 +146,52 @@
 }
 
 \frame{
-	\frametitle{Bitdecomp}
-	A tool that GSW use.
-	$\textnormal{BitDecomp}^{-1}$
-	
-	
+	\frametitle{GSW's tools (Bitdecomp)}
+	Fix $q=2^l, N=kl$, define the following functions on $\mathbb{Z}_q^*$.
+	Easier to understand with examples with $l=4, k=3, N=12$.
+	\begin{itemize}[<+->]
+		\item $\textnormal{BitDecomp}(1001_2, 0010_2, 1100_2)
+			=(1,0,0,1,0,0,1,0,1,1,0,0)$
+		\item $\textnormal{BitDecomp}^{-1}(1,0,0,1,0,0,1,0,1,1,0,0)
+			=(1001_2, 0010_2, 1100_2)$
+		\item $\textnormal{BitDecomp}^{-1}(0,0,10_2,0,0,1,10_2,1,11_2,0,1,1)
+			=(0100_2, 1001_2, 1011_2)$
+		\item $\textnormal{Flatten}=\textnormal{BitDecomp}\circ
+			\textnormal{BitDecomp}^{-1}$
+	\end{itemize}
+}
 
+\frame{
+	\frametitle{GSW's tools (Flatten)}
+		$\textnormal{Flatten}(
+		110_2, 101_2, 1_2, 11_2,$
 
+		$110_2, 101_2, 1_2, 11_2, 110_2, 101_2, 1_2, 11_2)$
+
+		\pause
+		$=\textnormal{BitDecomp}\circ
+			\textnormal{BitDecomp}^{-1}(
+			110_2, 101_2, 1_2, 11_2,$
+			
+		$110_2, 101_2, 1_2, 11_2,
+			110_2, 101_2, 1_2, 11_2)$
+
+		\pause
+		$=\textnormal{BitDecomp}(
+			1000_2\times110_2 + 100_2\times101_2 + 10_2\times1_2 + 11_2,$
+
+		$1000_2\times110_2 + 100_2\times101_2 + 10_2\times1_2 + 11_2,
+			1000_2\times110_2 + 100_2\times101_2 + 10_2\times1_2 + 11_2)$
+
+		\pause
+		$=\textnormal{BitDecomp}(
+			110000_2+10100_2+10_2+11_2,$
+
+		$110000_2+10100_2+10_2+11_2,
+			110000_2+10100_2+10_2+11_2)$
+
+		\pause
+		$=\textnormal{BitDecomp}(1001001_2, 1001001_2, 1001001_2)$
 }
 
 \frame{
