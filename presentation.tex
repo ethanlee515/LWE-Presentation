@@ -62,6 +62,17 @@
 }
 
 \frame{
+	\frametitle{GSW's LWE formulation}
+	\begin{enumerate}[<+->]
+		\item Take the rows of $A$ as $b_i||\vec{a}_i$ instead
+		\item Redefine $\vec{s}$ as $(1,-\vec{s})$
+		\item Either $A$ is uniform, or $\exists\vec{s}$ with
+			first coefficient 1 s.t. $A\vec{s}=\vec{e}$,
+			where $\vec{e}$ comes from $\chi$.
+	\end{enumerate}
+}
+
+\frame{
 	\frametitle{Asymmetric cryptography}
 	Two parties who may have never communicated before may securely
 	exchange information, by using the tools below:
@@ -146,7 +157,7 @@
 }
 
 \frame{
-	\frametitle{GSW's tools (Bitdecomp)}
+	\frametitle{GSW's tools}
 	Fix $q=2^l, N=kl$, define the following functions on $\mathbb{Z}_q^*$.
 	Easier to understand with examples with $l=4, k=3, N=12$.
 	\begin{itemize}[<+->]
@@ -158,40 +169,108 @@
 			=(0100_2, 1001_2, 1011_2)$
 		\item $\textnormal{Flatten}=\textnormal{BitDecomp}\circ
 			\textnormal{BitDecomp}^{-1}$
+		\item $\textnormal{Powersof2}(11_2, 0_2, 1_2)=
+			(11_2, 110_2, 1100_2, 11000_2,
+			0_2, 0_2, 0_2, 0_2, 1_2, 10_2, 100_2, 1000_2)$
 	\end{itemize}
 }
 
 \frame{
 	\frametitle{GSW's tools (Flatten)}
-		$\textnormal{Flatten}(
-		110_2, 101_2, 1_2, 11_2,$
-
-		$110_2, 101_2, 1_2, 11_2, 110_2, 101_2, 1_2, 11_2)$
-
+		\begin{align*}
+			\textnormal{Flatten}(&110_2, 101_2, 1_2, 11_2,\\
+				&110_2, 101_2, 1_2, 11_2,\\
+				&110_2, 101_2, 1_2, 11_2)
+		\end{align*}
 		\pause
-		$=\textnormal{BitDecomp}\circ
-			\textnormal{BitDecomp}^{-1}(
-			110_2, 101_2, 1_2, 11_2,$
-			
-		$110_2, 101_2, 1_2, 11_2,
-			110_2, 101_2, 1_2, 11_2)$
-
+		\begin{align*}
+		=\textnormal{BitDecomp}\circ
+			\textnormal{BitDecomp}^{-1}(&110_2, 101_2, 1_2, 11_2,\\
+			&110_2, 101_2, 1_2, 11_2,\\
+			&110_2, 101_2, 1_2, 11_2)
+		\end{align*}
 		\pause
-		$=\textnormal{BitDecomp}(
-			1000_2\times110_2 + 100_2\times101_2 + 10_2\times1_2 + 11_2,$
+		\begin{align*}
+			=\textnormal{BitDecomp}(
+			&110000_2+10100_2+10_2+11_2,\\
+			&110000_2+10100_2+10_2+11_2,\\
+			&110000_2+10100_2+10_2+11_2)
+		\end{align*}
+}
 
-		$1000_2\times110_2 + 100_2\times101_2 + 10_2\times1_2 + 11_2,
-			1000_2\times110_2 + 100_2\times101_2 + 10_2\times1_2 + 11_2)$
+\frame{
+	\frametitle{GSW's tools (Flatten)}
+	\begin{align*}
+		=\textnormal{BitDecomp}(&1001001_2,\\
+		&1001001_2,\\
+		&1001001_2)
+	\end{align*}
+	\pause
+	\begin{align*}
+	=\textnormal{BitDecomp}(1001_2, 1001_2, 1001_2)
+	\end{align*}
+	\pause
+	\begin{align*}
+	=(1,0,0,1,1,0,0,1,1,0,0,1)
+	\end{align*}
+}
 
-		\pause
-		$=\textnormal{BitDecomp}(
-			110000_2+10100_2+10_2+11_2,$
+\frame{
+	\frametitle{GSW's tools cont.}
+	Some basic properties
+	\begin{itemize}[<+->]
+		\item $\langle\textnormal{BitDecomp}(\vec{a}),
+			\textnormal{Powersof2}(\vec{b})\rangle
+			=\langle\vec{a},\vec{b}\rangle$
+		\item $\langle\vec{a},\textnormal{Powersof2}(\vec{b})\rangle
+			=\langle\textnormal{BitDecomp}^{-1}(\vec{a}),\vec{b}\rangle$
+		\item $=\langle\textnormal{Flatten}(\vec{a}),
+			\textnormal{Powersof2}(\vec{b})\rangle$
+	\end{itemize}
+}
 
-		$110000_2+10100_2+10_2+11_2,
-			110000_2+10100_2+10_2+11_2)$
+\frame{
+	\frametitle{GSW's Construction - Setup}
+	Choose the following parameters:
+	\begin{itemize}[<+->]
+		\item $q$ of $\kappa(\lambda, L)$ bits
+		\item $n(\lambda, L)$ lattice dimension parameter
+		\item Error distribution $\chi(\lambda, L)$
+		\item $m(\lambda, L)\in O(n\log q)$
+		\item $l=1 + \log q$
+		\item $N=(n+1)\times l$
+	\end{itemize}
+}
 
-		\pause
-		$=\textnormal{BitDecomp}(1001001_2, 1001001_2, 1001001_2)$
+\frame{
+	\frametitle{GSW's Construction - Secret Keygen}
+	\begin{enumerate}[<+->]
+		\item Sample $\vec{t}\leftarrow\mathbb{Z}^n_q$ uniformly.
+			This represents the solution of the LWE system of equations.
+		\item Output $sk=\vec{s}=1||-\vec{t}\in\mathbb{Z}^{n+1}_q$
+		\item Let $\vec{v}=\textnormal{Powersof2}(\vec{s})$
+	\end{enumerate}
+}
+
+\frame{
+	\frametitle{GSW's Construction - Public Keygen}
+	\begin{enumerate}[<+->]
+		\item Generate $B\leftarrow\mathbb{Z}^{m\times n}_q$ uniformly
+		\item Sample $\vec{e}\leftarrow\chi$
+		\item Set $\vec{b}=B\vec{t}+\vec{e}$
+		\item Set $pk$ as $\vec{b}$ on the first column,
+			followed by the columns of $B$.
+		\item Observe that $A\vec{s}=\vec{e}$
+	\end{enumerate}
+}
+
+\frame{
+	\frametitle{GSW's Construction - Encryption}
+	Input: $\mu$
+	\begin{enumerate}[<+->]
+		\item
+	\end{enumerate}
+
 }
 
 \frame{
@@ -202,9 +281,6 @@
 			Homomorphic Encryption from Learning with Errors:
 			Conceptually-Simpler, Asymptotically-Faster, Attribute-Based.
 	\end{itemize}
-
-
 }
-
 
 \end{document}
