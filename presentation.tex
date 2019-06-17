@@ -158,8 +158,9 @@
 
 \frame{
 	\frametitle{GSW's tools}
-	Fix $q=2^l, N=kl$, define the following functions on $\mathbb{Z}_q^*$.
-	Easier to understand with examples with $l=4, k=3, N=12$.
+	Define the following functions on $\mathbb{Z}_q^*$.
+	Easier to understand with examples.
+	\pause
 	\begin{itemize}[<+->]
 		\item $\textnormal{BitDecomp}(1001_2, 0010_2, 1100_2)
 			=(1,0,0,1,0,0,1,0,1,1,0,0)$
@@ -256,7 +257,7 @@
 	\frametitle{GSW's Construction - Public Keygen}
 	\begin{enumerate}[<+->]
 		\item Generate $B\leftarrow\mathbb{Z}^{m\times n}_q$ uniformly
-		\item Sample $\vec{e}\leftarrow\chi$
+		\item Sample $\vec{e}\leftarrow\chi^m$
 		\item Set $\vec{b}=B\vec{t}+\vec{e}$
 		\item Set $pk$ as $\vec{b}$ on the first column,
 			followed by the columns of $B$.
@@ -268,7 +269,9 @@
 	\frametitle{GSW's Construction - Encryption}
 	Input: $\mu$
 	\begin{enumerate}[<+->]
-		\item
+		\item Sample $R\in\{0, 1\}^{N\times m}$
+		\item Output $\textnormal{Flatten}(
+			\mu\cdot I+\textnormal{BitDecomp}(R\cdot A)$
 	\end{enumerate}
 
 }
