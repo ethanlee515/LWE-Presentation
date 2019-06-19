@@ -1,7 +1,7 @@
 \documentclass{beamer}
 \usetheme{Copenhagen}
 
-\title{LWE and cryptography}
+\title{Learning with Error and GSW's Homomorphic Encryption}
 
 \begin{document}
 
@@ -12,10 +12,10 @@
 \frame{
 	\frametitle{Motivation}
 	\begin{itemize}[<+->]
-		\item Originally as an attempt to solve lattice problems
+		\item LWE was an attempt to solve lattice problems
 		\item Worst-case lattice problems reduce to LWE
-		\item Need new encryption schemes that are at least as hard to
-			break as problems difficult for quantum computers
+		\item Need of new encryption schemes that are at least as hard to
+			break as solving problems difficult for quantum computers
 		\item LWE fits the bill
 	\end{itemize}
 }
@@ -57,19 +57,26 @@
 
 \frame{
 	\frametitle{Search to decision reduction}
-
-
+	\begin{itemize}[<+->]
+		\item Assuming $q\in O(poly(n))$ is prime
+		\item Inductive process; solve variable-by-variable
+		\item Take $k$, a guess for $s_1$
+		\item Pick $r$ uniformly at random
+		\item Map $(\vec{a}, b)$ to $(\vec{a}+(r,0,0,\ldots,0), b+rk)$
+		\item The above maps $A_{\vec{s},\chi}$ to itself if $k=s_1$,
+			and to the uniform distribution otherwise.
+		\item Check using the blackbox for decision version.
+			Try another $k$ until the guess is correct.
+	\end{itemize}
 }
 
 \frame{
 	\frametitle{GSW's LWE formulation}
-	\begin{enumerate}[<+->]
-		\item Take the rows of $A$ as $b_i||\vec{a}_i$ instead
+	\begin{itemize}[<+->]
+		\item Redefine $\vec{a}_i$ as $b_i||\vec{a}_i$
 		\item Redefine $\vec{s}$ as $(1,-\vec{s})$
-		\item Either $A$ is uniform, or $\exists\vec{s}$ with
-			first coefficient 1 s.t. $A\vec{s}=\vec{e}$,
-			where $\vec{e}$ comes from $\chi$.
-	\end{enumerate}
+		\item $A\vec{s}=\vec{e}$,
+	\end{itemize}
 }
 
 \frame{
@@ -81,7 +88,7 @@
 		\item $pk$: ``public key", used for encryption
 		\item $\textnormal{Enc}_{pk}:\Sigma^*\times\mathcal{R}\rightarrow U$
 		\item $sk$: ``secret key", used for decryption
-		\item $\textnormal{Dec}_{sk}:U\rightarrow\Sigma^*$
+		\item $\textnormal{Dec}_{sk}:U\rightarrow\Sigma^*$.
 		\item $\textnormal{Dec}_{sk}\circ\textnormal{Enc}_{pk}(x, r)=x$
 			with overwhelming probability over $r$
 	\end{itemize}
@@ -159,9 +166,13 @@
 \frame{
 	\frametitle{GSW's tools}
 	Define the following functions on $\mathbb{Z}_q^*$.
-	Easier to understand with examples.
+	Easier to understand with examples. Take $q=2^4$.
 	\pause
 	\begin{itemize}[<+->]
+		\item $\textnormal{Powersof2}(1_2, 0_2, 11_2)=
+			(1_2, 10_2, 100_2, 1000_2,
+			0_2, 0_2, 0_2, 0_2,
+			11_2, 110_2, 1100_2, 1000_2)$
 		\item $\textnormal{BitDecomp}(1001_2, 0010_2, 1100_2)
 			=(1,0,0,1,0,0,1,0,1,1,0,0)$
 		\item $\textnormal{BitDecomp}^{-1}(1,0,0,1,0,0,1,0,1,1,0,0)
@@ -170,9 +181,6 @@
 			=(0100_2, 1001_2, 1011_2)$
 		\item $\textnormal{Flatten}=\textnormal{BitDecomp}\circ
 			\textnormal{BitDecomp}^{-1}$
-		\item $\textnormal{Powersof2}(11_2, 0_2, 1_2)=
-			(11_2, 110_2, 1100_2, 11000_2,
-			0_2, 0_2, 0_2, 0_2, 1_2, 10_2, 100_2, 1000_2)$
 	\end{itemize}
 }
 
@@ -234,22 +242,20 @@
 	\frametitle{GSW's Construction - Setup}
 	Choose the following parameters:
 	\begin{itemize}[<+->]
-		\item $q$ of $\kappa(\lambda, L)$ bits
-		\item $n(\lambda, L)$ lattice dimension parameter
+		\item Modulus $q=2^l$ (to simplify some proofs)
+		\item Lattice dimension $n$
 		\item Error distribution $\chi(\lambda, L)$
-		\item $m(\lambda, L)\in O(n\log q)$
-		\item $l=1 + \log q$
-		\item $N=(n+1)\times l$
+		\item $m\in O(n\log q)$
 	\end{itemize}
 }
 
 \frame{
 	\frametitle{GSW's Construction - Secret Keygen}
 	\begin{enumerate}[<+->]
-		\item Sample $\vec{t}\leftarrow\mathbb{Z}^n_q$ uniformly.
+		\item Sample $\vec{s}\leftarrow\mathbb{Z}^n_q$ uniformly.
 			This represents the solution of the LWE system of equations.
-		\item Output $sk=\vec{s}=1||-\vec{t}\in\mathbb{Z}^{n+1}_q$
-		\item Let $\vec{v}=\textnormal{Powersof2}(\vec{s})$
+		\item Output $sk$ as $1$ on the first coordinate,
+			followed by $-\vec{s}$.
 	\end{enumerate}
 }
 
@@ -258,10 +264,9 @@
 	\begin{enumerate}[<+->]
 		\item Generate $B\leftarrow\mathbb{Z}^{m\times n}_q$ uniformly
 		\item Sample $\vec{e}\leftarrow\chi^m$
-		\item Set $\vec{b}=B\vec{t}+\vec{e}$
-		\item Set $pk$ as $\vec{b}$ on the first column,
+		\item Set $pk$ as $B\vec{s}+\vec{e}$ on the first column,
 			followed by the columns of $B$.
-		\item Observe that $A\vec{s}=\vec{e}$
+		\item Observe that $pk\cdot sk=\vec{e}$
 	\end{enumerate}
 }
 
@@ -271,9 +276,90 @@
 	\begin{enumerate}[<+->]
 		\item Sample $R\in\{0, 1\}^{N\times m}$
 		\item Output $\textnormal{Flatten}(
-			\mu\cdot I+\textnormal{BitDecomp}(R\cdot A)$
+			\mu\cdot I+\textnormal{BitDecomp}(R\cdot pk))$
 	\end{enumerate}
+}
 
+\frame{
+	\frametitle{GSW's Construction - Decryption}
+	$\textnormal{Flatten}(
+			\mu\cdot I+\textnormal{BitDecomp}(R\cdot pk))
+			\cdot\textnormal{Powersof2}(sk)$
+	\pause
+	$=(\mu\cdot I+\textnormal{BitDecomp}(R\cdot pk))
+			\cdot\textnormal{Powersof2}(sk)$
+	\pause
+	$=\mu\textnormal{Powersof2}(sk) + R\cdot pk\cdot sk$
+}
+
+\frame{
+	\frametitle{GSW's Construction - Decryption cont.}
+	$\mu\textnormal{Powersof2}(sk) + R\cdot pk\cdot sk$
+	\begin{itemize}[<+->]
+		\item The second term is small.
+		\item The first coordinate of $sk$ is $1$.
+		\item $\Rightarrow$ The first coordinates of 
+			$\mu\textnormal{Powersof2}(sk) + R\cdot pk\cdot sk$
+			are $\approx\mu, 2\mu, \ldots, 2^{l-2}\mu, 2^{l-1}\mu$
+		\item Recover $\mu$'s least significant bit by $LSB(\mu)=2^{l-1}\mu$
+		\item Recover $\mu$'s next bit by $2^{l-2}(\mu-LSB(\mu))$
+		\item Similar for all other bits of $\mu$.
+		\item Decryption breaks down when the error reaches $q/4$.
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's Construction - Security}
+	\begin{itemize}[<+->]
+		\item If $C=\textnormal{Enc}_{pk}(\mu, r)$ hides $\mu$, so does
+			$\textnormal{BitDecomp}^{-1}(C)$, since $C$ can be derived from
+			it.
+		\item $\textnormal{BitDecomp}^{-1}(C)
+			=\mu\cdot\textnormal{BitDecomp}^{-1}(I)+R\cdot A$
+		\item Fact: The joint distribution $(A, R\cdot A)$ is
+			indistinguishable from uniform, if $m>2nl$
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's Construction - NAND}
+	\begin{itemize}[<+->]
+		\item $(I-C_1\cdot C_2)\vec{v}
+			=(1-\mu_1\mu_2)\vec{v}-\mu_2\vec{e}_1-C_1\vec{e}_2$
+		\item Error increased by a factor of $N+1$.
+		\item Final error increase by a factor of $(N+1)^L$
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's Construction - Multiplying by constant}
+	Input: $C, \alpha$
+	\begin{itemize}[<+->]
+		\item Set $M_\alpha=\textnormal{Flatten}(\alpha I)$	
+		\item Output $\textnormal{Flatten}(M_\alpha\cdot C)$
+		\item Observe $M_\alpha\cdot C\vec{v}
+			=M_\alpha\cdot(\mu\vec{v}+\vec{e})
+			=\alpha\mu\vec{v}+M_\alpha\cdot{e}$
+		\item Error increases by a factor of $N$
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's Construction - Addition}
+	\begin{itemize}[<+->]
+		\item Simply add the ciphertexts
+		\item Error increases by a factor of 2
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's Construction - Multiplication}
+	\begin{itemize}[<+->]
+		\item $C_1\cdot C_2\vec{v}=C_1(\mu_2\vec{v}+\vec{e}_2)
+			=\mu_1\mu_2\vec{v}+\mu_2\vec{e}_1+C_1\vec{e}_2$
+		\item Error increase depends on what's being encrypted
+		\item May need to assume bounds on the values being computed
+	\end{itemize}
 }
 
 \frame{
