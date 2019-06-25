@@ -142,16 +142,15 @@
 	Easier to understand with examples. Take $q=2^4$.
 	\pause
 	\begin{itemize}[<+->]
-		\item $\textnormal{Powersof2}(1_2, 0_2, 11_2)=
+		\item $\textnormal{Powersof2}(1_2, 11_2)=
 			(1_2, 10_2, 100_2, 1000_2,
-			0_2, 0_2, 0_2, 0_2,
 			11_2, 110_2, 1100_2, 1000_2)$
-		\item $\textnormal{BitDecomp}(1001_2, 0010_2, 1100_2)
-			=(1,0,0,1,0,0,1,0,1,1,0,0)$
-		\item $\textnormal{BitDecomp}^{-1}(1,0,0,1,0,0,1,0,1,1,0,0)
-			=(1001_2, 0010_2, 1100_2)$
-		\item $\textnormal{BitDecomp}^{-1}(0,0,10_2,0,0,1,10_2,1,11_2,0,1,1)
-			=(0100_2, 1001_2, 1011_2)$
+		\item $\textnormal{BitDecomp}(1001_2, 0010_2)
+			=(1,0,0,1,0,0,1,0)$
+		\item $\textnormal{BitDecomp}^{-1}(1,0,0,1,0,0,1,0)
+			=(1001_2, 0010_2)$
+		\item $\textnormal{BitDecomp}^{-1}(0,0,10_2,0,0,1,10_2,1)
+			=(0100_2, 1001_2)$
 		\item $\textnormal{Flatten}=\textnormal{BitDecomp}\circ
 			\textnormal{BitDecomp}^{-1}$
 	\end{itemize}
@@ -159,41 +158,23 @@
 
 \frame{
 	\frametitle{GSW's tools (Flatten)}
-		\begin{align*}
-			\textnormal{Flatten}(&110_2, 101_2, 1_2, 11_2,\\
-				&110_2, 101_2, 1_2, 11_2,\\
-				&110_2, 101_2, 1_2, 11_2)
-		\end{align*}
-		\pause
-		\begin{align*}
-		=\textnormal{BitDecomp}\circ
-			\textnormal{BitDecomp}^{-1}(&110_2, 101_2, 1_2, 11_2,\\
-			&110_2, 101_2, 1_2, 11_2,\\
+	\begin{align*}
+		\textnormal{Flatten}(&110_2, 101_2, 1_2, 11_2,\\
 			&110_2, 101_2, 1_2, 11_2)
-		\end{align*}
-		\pause
-		\begin{align*}
-			=\textnormal{BitDecomp}(
-			&110000_2+10100_2+10_2+11_2,\\
-			&110000_2+10100_2+10_2+11_2,\\
-			&110000_2+10100_2+10_2+11_2)
-		\end{align*}
-}
-
-\frame{
-	\frametitle{GSW's tools (Flatten)}
-	\begin{align*}
-		=\textnormal{BitDecomp}(&1001001_2,\\
-		&1001001_2,\\
-		&1001001_2)
 	\end{align*}
 	\pause
 	\begin{align*}
-	=\textnormal{BitDecomp}(1001_2, 1001_2, 1001_2)
+	=\textnormal{BitDecomp}\circ
+		\textnormal{BitDecomp}^{-1}(&110_2, 101_2, 1_2, 11_2,\\
+		&110_2, 101_2, 1_2, 11_2)
 	\end{align*}
 	\pause
 	\begin{align*}
-	=(1,0,0,1,1,0,0,1,1,0,0,1)
+	=\textnormal{BitDecomp}(1001_2, 1001_2)
+	\end{align*}
+	\pause
+	\begin{align*}
+	=(1,0,0,1,1,0,0,1)
 	\end{align*}
 }
 
