@@ -40,20 +40,26 @@
 		\item Search version: Find $\vec{s}$.
 		\item Decision version: Distinguish between $A_{\vec{s}, \chi}$
 			and the uniform distribution.
+		\item Both are difficult
+		\item Decision isn't much easier than search
 	\end{itemize}
 }
 
 
 \frame{
 	\frametitle{Search to decision reduction}
+	Works when $q\in O(poly(n))$ is prime.
+
+
 	\begin{itemize}[<+->]
-		\item Assuming $q\in O(poly(n))$ is prime
 		\item Inductive process; solve variable-by-variable
-		\item Take $k$, a guess for $s_1$
-		\item Pick $r$ uniformly at random
-		\item Map $(\vec{a}, b)$ to $(\vec{a}+(r,0,0,\ldots,0), b+rk)$
-		\item The above maps $A_{\vec{s},\chi}$ to itself if $k=s_1$,
-			and to the uniform distribution otherwise.
+		\item Guess $s_1=k$
+		\item Pick $r$ at random
+		\item Map $(\vec{a}, b)$ to
+			$(\vec{a}+\begin{pmatrix}r\\0\\0\\\vdots\\0\end{pmatrix}, b+rk)$
+		\item The above maps $A_{\vec{s},\chi}$ to itself
+			if the guess was correct.
+		\item Maps to the uniform distribution otherwise.
 		\item Check using the blackbox for decision version.
 			Try another $k$ until the guess is correct.
 	\end{itemize}
@@ -62,18 +68,15 @@
 \frame{
 	\frametitle{GSW's LWE formulation}
 	\begin{itemize}[<+->]
-		\item Redefine $\vec{a}_i$ as $b_i||\vec{a}_i$
+		\item Define $A_i$ as $b_i||\vec{a}_i$
 		\item Redefine $\vec{s}$ as $(1,-\vec{s})$
 		\item $A\vec{s}=\vec{e}$,
 	\end{itemize}
-	\pause[\thebeamerpauses]
-	Supposedly very hard problem.
 }
 
 \frame{
 	\frametitle{Asymmetric cryptography}
-	Two parties who may have never communicated before may securely
-	exchange information, by using the tools below:
+	Allows secure communication by using the tools below:
 	\pause
 	\begin{itemize}[<+->]
 		\item $pk$: ``public key", used for encryption
@@ -111,8 +114,11 @@
 \frame{
 	\frametitle{Homomorphic encryption}
 	\begin{itemize}[<+->]
-		\item TODO
-		\item TODO
+		\item Allows computation on ciphertext
+		\item Given function $f$ and $\textnormal{Enc}(x)$,
+			compute $\textnormal{Enc}(f(x))$ without decrypting.
+		\item May involve an evaluation key.
+		\item Application includes quantum computing
 	\end{itemize}
 }
 
