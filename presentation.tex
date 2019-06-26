@@ -114,9 +114,9 @@
 \frame{
 	\frametitle{Homomorphic encryption}
 	\begin{itemize}[<+->]
-		\item Allows computation on ciphertext
-		\item Given function $f$ and $\textnormal{Enc}(x)$,
-			compute $\textnormal{Enc}(f(x))$ without decrypting.
+		\item Allows computation on ciphertext without decrypting
+		\item Given function $f$ and $\textnormal{Enc}(x)$, allows
+			computing $\textnormal{Enc}(f(x))$.
 		\item May involve an evaluation key.
 		\item Application includes quantum computing
 	\end{itemize}
@@ -143,8 +143,8 @@
 	\pause
 	\begin{itemize}[<+->]
 		\item $\textnormal{Powersof2}(1_2, 11_2)=
-			(1_2, 10_2, 100_2, 1000_2,
-			11_2, 110_2, 1100_2, 1000_2)$
+			(1000_2, 100_2, 10_2, 1_2,
+			1000_2, 1100_2, 110_2, 11_2)$
 		\item $\textnormal{BitDecomp}(1001_2, 0010_2)
 			=(1,0,0,1,0,0,1,0)$
 		\item $\textnormal{BitDecomp}^{-1}(1,0,0,1,0,0,1,0)
@@ -254,7 +254,7 @@
 		\item The first coordinate of $sk$ is $1$.
 		\item $\Rightarrow$ The first coordinates of 
 			$\mu\textnormal{Powersof2}(sk) + R\cdot pk\cdot sk$
-			are $\approx\mu, 2\mu, \ldots, 2^{l-2}\mu, 2^{l-1}\mu$
+			are $\approx2^{l-1}\mu, 2^{l-2}\mu, \ldots, \mu$
 		\item Recover $\mu$'s least significant bit by $LSB(\mu)=2^{l-1}\mu$
 		\item Recover $\mu$'s next bit by $2^{l-2}(\mu-LSB(\mu))$
 		\item Similar for all other bits of $\mu$.
