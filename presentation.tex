@@ -60,7 +60,7 @@
 		\item The above maps $A_{\vec{s},\chi}$ to itself
 			if the guess was correct.
 		\item Maps to the uniform distribution otherwise.
-		\item Check using the blackbox for decision version.
+		\item Check using the oracle.
 			Try another $k$ until the guess is correct.
 	\end{itemize}
 }
@@ -107,7 +107,7 @@
 		\item Chosen plaintext attack (CPA): The "intuitive" definition.
 			An (efficient) adversary who's able to encrypt anything shouldn't
 			be able to decrypt anything.
-		\item Ciphertext indistinguishability (TODO)
+		\item Ciphertext indistinguishability
 	\end{itemize}
 }
 
@@ -126,10 +126,11 @@
 	\frametitle{Idea of GSW's homomorphic encryption}
 	Intuitive idea as follows:
 	\begin{itemize}[<+->]
-		\item private key $\vec{v}$ is a vector
-		\item ciphertexts are matrices with $\vec{v}$ approximately as an
-			eigenvector
-		\item plaintexts are corresponding approximate eigenvalues
+		\item Using the ``approximate eigenvector":
+			$C\vec{v}\approx\lambda\vec{v}$
+		\item $\vec{v}$ is the private key
+		\item $C$ is the ciphertext
+		\item $\lambda$ is the plaintext
 		\item $(C_1+C_2)\vec{v}\approx(\lambda_1+\lambda_2)\vec{v}$
 		\item $(C_1C_2)\vec{v}\approx(\lambda_1\lambda_2)\vec{v}$
 		\item When plaintexts are booleans, $I_N-C_1C_2$ encodes NAND.
@@ -253,8 +254,7 @@
 		\item The second term is small.
 		\item The first coordinate of $sk$ is $1$.
 		\item $\Rightarrow$ The first coordinates of 
-			$\mu\textnormal{Powersof2}(sk) + R\cdot pk\cdot sk$
-			are $\approx2^{l-1}\mu, 2^{l-2}\mu, \ldots, \mu$
+			the first term are $2^{l-1}\mu, 2^{l-2}\mu, \ldots, \mu$
 		\item Recover $\mu$'s least significant bit by $LSB(\mu)=2^{l-1}\mu$
 		\item Recover $\mu$'s next bit by $2^{l-2}(\mu-LSB(\mu))$
 		\item Similar for all other bits of $\mu$.
@@ -265,13 +265,14 @@
 \frame{
 	\frametitle{GSW's Construction - Security}
 	\begin{itemize}[<+->]
-		\item If $C=\textnormal{Enc}_{pk}(\mu, r)$ hides $\mu$, so does
-			$\textnormal{BitDecomp}^{-1}(C)$, since $C$ can be derived from
-			it.
 		\item $\textnormal{BitDecomp}^{-1}(C)
 			=\mu\cdot\textnormal{BitDecomp}^{-1}(I)+R\cdot A$
 		\item Fact: The joint distribution $(A, R\cdot A)$ is
 			indistinguishable from uniform, if $m>2nl$
+		\item $\Rightarrow\textnormal{BitDecomp}^{-1}(C)$ hides $\mu$
+		\item $C=\textnormal{Flatten}(C)
+			=\textnormal{BitDecomp}\circ\textnormal{BitDecomp}^{-1}(C)$
+			hides $\mu$
 	\end{itemize}
 }
 
@@ -301,7 +302,7 @@
 \frame{
 	\frametitle{GSW's Construction - Addition}
 	\begin{itemize}[<+->]
-		\item Simply add the ciphertexts
+		\item Output $\textnormal{Flatten}(C_1+C_2)$
 		\item Error increases by a factor of 2
 	\end{itemize}
 }
@@ -309,10 +310,22 @@
 \frame{
 	\frametitle{GSW's Construction - Multiplication}
 	\begin{itemize}[<+->]
+		\item Output $\textnormal{Flatten}(C_1C_2)$
 		\item $C_1\cdot C_2\vec{v}=C_1(\mu_2\vec{v}+\vec{e}_2)
 			=\mu_1\mu_2\vec{v}+\mu_2\vec{e}_1+C_1\vec{e}_2$
-		\item Error increase depends on what's being encrypted
+		\item Error increase depends on what's encrypted
 		\item May need to assume bounds on the values being computed
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{Choosing parameters}
+	\begin{itemize}[<+->]
+		\item $\frac{q}{B}>4(N+1)^L$ for NANDs
+		\item $\frac{q}{B}>4(N+T)^L$ for arithmetic circuit,
+			where $T$ is the upper bound on plaintexts
+		\item $N$ increases linearly with $\log\frac{q}{B}$ for LWE's security
+		\item Pick $(q, B, N)$ accordingly
 	\end{itemize}
 }
 
