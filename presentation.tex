@@ -1,7 +1,7 @@
 \documentclass{beamer}
 \usetheme{Copenhagen}
 
-\title{Learning with Error and GSW's Homomorphic Encryption}
+\title{Learning with Errors and GSW's Homomorphic Encryption}
 
 \begin{document}
 
@@ -22,60 +22,26 @@
 }
 
 \frame{
-	\frametitle{Definition (LWE Distribution)}
-	Let $A_{\vec{s}, \chi}$ be a distribution on
-	$\mathbb{Z}^n_q\times\mathbb{Z}_q$ as follows:
-	\pause
+	\frametitle{Definition (LWE Problem)}
 	\begin{itemize}[<+->]
-		\item Pick $\vec{a}\in\mathbb{Z}^n_q$ uniformly randomly
-		\item Pick $e$ according to $\chi$
-		\item Output $(\vec{a}, \langle\vec{a}, \vec{s}\rangle + e)$
+		\item Pick uniformly random $\vec{s}\in\mathbb{Z}^n_q$
+		\item Take $\chi$ to be a discrete Gaussian distribution with some
+			variance to be specified
+		\item Input: $poly(n)$ equations sampled as below:
+			\begin{itemize}[<+->]
+				\item pick coefficients $\vec{a}\in\mathbb{Z}^n_q$ at random
+				\item Sample error $e\leftarrow\chi$
+				\item Output $(\vec{a}\cdot\vec{s} + e,
+					\vec{a})\in\mathbb{Z}^{1+n}_q$
+			\end{itemize}
+		\item Output: $\vec{s}$
+		\item Note that $(\vec{a}\cdot\vec{s} + e, \vec{a})
+			\cdot(1,-\vec{s}) = e$
 	\end{itemize}
 }
 
 \frame{
-	\frametitle{Definition (LWE problem)}
-	Given samples from $A_{\vec{s}, \chi}$,
-	\begin{itemize}[<+->]
-		\item Search version: Find $\vec{s}$.
-		\item Decision version: Distinguish between $A_{\vec{s}, \chi}$
-			and the uniform distribution.
-		\item Both are difficult
-		\item Decision isn't much easier than search
-	\end{itemize}
-}
-
-
-\frame{
-	\frametitle{Search to decision reduction}
-	Works when $q\in O(poly(n))$ is prime.
-
-
-	\begin{itemize}[<+->]
-		\item Inductive process; solve variable-by-variable
-		\item Guess $s_1=k$
-		\item Pick $r$ at random
-		\item Map $(\vec{a}, b)$ to
-			$(\vec{a}+\begin{pmatrix}r\\0\\0\\\vdots\\0\end{pmatrix}, b+rk)$
-		\item The above maps $A_{\vec{s},\chi}$ to itself
-			if the guess was correct.
-		\item Maps to the uniform distribution otherwise.
-		\item Check using the blackbox for decision version.
-			Try another $k$ until the guess is correct.
-	\end{itemize}
-}
-
-\frame{
-	\frametitle{GSW's LWE formulation}
-	\begin{itemize}[<+->]
-		\item Define $A_i$ as $b_i||\vec{a}_i$
-		\item Redefine $\vec{s}$ as $(1,-\vec{s})$
-		\item $A\vec{s}=\vec{e}$,
-	\end{itemize}
-}
-
-\frame{
-	\frametitle{Asymmetric cryptography}
+	\frametitle{Homomorphic encryption}
 	Allows secure communication by using the tools below:
 	\pause
 	\begin{itemize}[<+->]
@@ -83,42 +49,7 @@
 		\item $\textnormal{Enc}_{pk}:\Sigma^*\times\mathcal{R}\rightarrow U$
 		\item $sk$: ``secret key", used for decryption
 		\item $\textnormal{Dec}_{sk}:U\rightarrow\Sigma^*$.
-		\item $\textnormal{Dec}_{sk}\circ\textnormal{Enc}_{pk}(x, r)=x$
-			with overwhelming probability over $r$
-	\end{itemize}
-}
-
-\frame{
-	Typical use of such a scheme:
-	\frametitle{Asymmetric cryptography cont.}
-	\begin{enumerate}[<+->]
-		\item Alice generates $(pk, sk)$
-		\item Alice sends $pk$ to Bob
-		\item Bob encrypts his message using $pk$
-		\item Bob sends the ciphertext to Alice
-		\item Alice decrypts it using $sk$
-	\end{enumerate}
-}
-
-\frame{
-	\frametitle{Security}
-	\begin{itemize}[<+->]
-		\item What does it mean for an encryption scheme to be secure?
-		\item Chosen plaintext attack (CPA): The "intuitive" definition.
-			An (efficient) adversary who's able to encrypt anything shouldn't
-			be able to decrypt anything.
-		\item Ciphertext indistinguishability (TODO)
-	\end{itemize}
-}
-
-\frame{
-	\frametitle{Homomorphic encryption}
-	\begin{itemize}[<+->]
-		\item Allows computation on ciphertext without decrypting
-		\item Given function $f$ and $\textnormal{Enc}(x)$, allows
-			computing $\textnormal{Enc}(f(x))$.
-		\item May involve an evaluation key.
-		\item Application includes quantum computing
+		\item $evk$: ``evaluation key"
 	\end{itemize}
 }
 
@@ -137,58 +68,92 @@
 }
 
 \frame{
-	\frametitle{GSW's tools}
-	Define the following functions on $\mathbb{Z}_q^*$.
-	Easier to understand with examples. Take $q=2^4$.
-	\pause
+	\frametitle{Idea of GSW's homomorphic encryption cont.}
 	\begin{itemize}[<+->]
-		\item $\textnormal{Powersof2}(1_2, 11_2)=
-			(1000_2, 100_2, 10_2, 1_2,
-			1000_2, 1100_2, 110_2, 11_2)$
-		\item $\textnormal{BitDecomp}(1001_2, 0010_2)
-			=(1,0,0,1,0,0,1,0)$
-		\item $\textnormal{BitDecomp}^{-1}(1,0,0,1,0,0,1,0)
-			=(1001_2, 0010_2)$
-		\item $\textnormal{BitDecomp}^{-1}(0,0,10_2,0,0,1,10_2,1)
-			=(0100_2, 1001_2)$
-		\item $\textnormal{Flatten}=\textnormal{BitDecomp}\circ
-			\textnormal{BitDecomp}^{-1}$
+		\item Take $pk$ to be a matrix where each row is a tuple
+		\item Take $sk=(1, -\vec{s}$
+		\item Take $C=\mu I_n+$
+	
+
+
+
+}
+
+\frame{
+	\frametitle{GSW's tools - terminology}
+	\begin{itemize}[<+->]
+		\item For the sake of illustration, fix $q=2^l=2^4$.
+		\item Let $a=\underline{a_3a_2a_1a_0}=\sum 2^ia_i$ represent
+			the base-2 digits of $a$
+		\item Similarly, denote base-2 numbers like
+			$\underline{1011}=8+2+1=11$
+	\end{itemize}
+}
+	
+
+\frame{
+	\frametitle{GSW's tools - Powersof2}
+	\begin{itemize}[<+->]
+		\item $\textnormal{Powersof2}(a)=(2^3a, 2^2a, 2a, a)$
+		\item $=\begin{pmatrix}2^3a\\2^2a\\2a\\a\end{pmatrix}$
+		\item $\textnormal{Powersof2}(\underline{11})= (\underline{1000},
+			\underline{1100}, \underline{110}, \underline{11})$
+		\item $\textnormal{Powersof2}(a, b)
+			=(2^3a, 2^2a, 2a, a, 2^3b, 2^2b, 2b, b)$
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's tools - BitDecomp}
+	\begin{itemize}[<+->]
+		\item $\textnormal{BitDecomp}(\underline{a_3a_2a_1a_0})=
+			\begin{pmatrix} a_3 & a_2 & a_1 & a_0 \end{pmatrix}$
+		\item $\textnormal{BitDecomp}
+			\begin{pmatrix}
+				\underline{a_3a_2a_1a_0} & \underline{b_3b_2b_1b_0} \\
+				\underline{c_3c_2c_1c_0} & \underline{d_3d_2d_1d_0}
+			\end{pmatrix}
+			= \begin{pmatrix}
+				a_3 & a_2 & a_1 & a_0 & b_3 & b_2 & b_1 & b_0 \\
+				c_3 & c_2 & c_1 & c_0 & d_3 & d_2 & d_1 & d_0
+			\end{pmatrix}$
+		\item $\textnormal{BitDecomp}(A)
+			\textnormal{Powersof2}(\vec{b})
+			=A\vec{b}$
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{GSW's tools - $\textnormal{BitDecomp}^{-1}$}
+	\begin{itemize}[<+->]
+		\item $\textnormal{BitDecomp}^{-1}\begin{pmatrix}
+			1 & 0 & 0 & 1
+		\end{pmatrix} = \underline{1001}$
+		\item $\textnormal{BitDecomp}^{-1}\begin{pmatrix}
+			0 & 0 & \underline{10} & 0
+		\end{pmatrix} = \underline{0100}$
+		\item $A\textnormal{Powersof2}(\vec{b})
+			=\textnormal{BitDecomp}^{-1}(A)\vec{b}$
 	\end{itemize}
 }
 
 \frame{
 	\frametitle{GSW's tools (Flatten)}
-	\begin{align*}
-		\textnormal{Flatten}(&110_2, 101_2, 1_2, 11_2,\\
-			&110_2, 101_2, 1_2, 11_2)
-	\end{align*}
-	\pause
-	\begin{align*}
-	=\textnormal{BitDecomp}\circ
-		\textnormal{BitDecomp}^{-1}(&110_2, 101_2, 1_2, 11_2,\\
-		&110_2, 101_2, 1_2, 11_2)
-	\end{align*}
-	\pause
-	\begin{align*}
-	=\textnormal{BitDecomp}(1001_2, 1001_2)
-	\end{align*}
-	\pause
-	\begin{align*}
-	=(1,0,0,1,1,0,0,1)
-	\end{align*}
-}
-
-\frame{
-	\frametitle{GSW's tools cont.}
-	Some basic properties
 	\begin{itemize}[<+->]
-		\item $\langle\textnormal{BitDecomp}(\vec{a}),
-			\textnormal{Powersof2}(\vec{b})\rangle
-			=\langle\vec{a},\vec{b}\rangle$
-		\item $\langle\vec{a},\textnormal{Powersof2}(\vec{b})\rangle
-			=\langle\textnormal{BitDecomp}^{-1}(\vec{a}),\vec{b}\rangle$
-		\item $=\langle\textnormal{Flatten}(\vec{a}),
-			\textnormal{Powersof2}(\vec{b})\rangle$
+		\item $\textnormal{Flatten}=\textnormal{BitDecomp}\circ
+			\textnormal{BitDecomp}^{-1}$
+		\item $\textnormal{Flatten}
+			\begin{pmatrix}
+				\underline{110} & \underline{101} & 1 & \underline{11}
+			\end{pmatrix}$
+		\item $=\textnormal{BitDecomp}\circ\textnormal{BitDecomp}^{-1}
+			\begin{pmatrix}
+				\underline{110} & \underline{101} & 1 & \underline{11}
+			\end{pmatrix}$
+		\item $=\begin{pmatrix}1&0&0&1\end{pmatrix}$
+		\item $\textnormal{Flatten}(A)$ has only $0, 1$ entries
+		\item $\textnormal{Flatten}(A)\textnormal{Powersof2}(\vec{b})
+			=A\textnormal{Powersof2}(\vec{b})$
 	\end{itemize}
 }
 
@@ -272,6 +237,17 @@
 			=\mu\cdot\textnormal{BitDecomp}^{-1}(I)+R\cdot A$
 		\item Fact: The joint distribution $(A, R\cdot A)$ is
 			indistinguishable from uniform, if $m>2nl$
+	\end{itemize}
+}
+
+\frame{
+	\frametitle{Security}
+	\begin{itemize}[<+->]
+		\item What does it mean for an encryption scheme to be secure?
+		\item Chosen plaintext attack (CPA): The "intuitive" definition.
+			An (efficient) adversary who's able to encrypt anything shouldn't
+			be able to decrypt anything.
+		\item Ciphertext indistinguishability
 	\end{itemize}
 }
 
