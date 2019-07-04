@@ -59,7 +59,6 @@
 
 \frame{
 	\frametitle{Idea of GSW's homomorphic encryption}
-	Intuitive idea as follows:
 	\begin{itemize}[<+->]
 		\item $C\vec{v}\approx\mu\vec{v}$
 		\item $sk=\vec{v}$
@@ -75,7 +74,7 @@
 	\begin{itemize}[<+->]
 		\item Take $A\vec{s}=\vec{e}$ as given by LWE.
 		\item Sample $R\in\set{0,1}^{(n+1)\times m}$ randomly
-		\item Observe $(\mu I_n+RA)\vec{s}\approx\mu\vec{s}$
+		\item Observe $(\mu I_{n+1}+RA)\vec{s}\approx\mu\vec{s}$
 		\item Challenge: Error grows too quickly
 	\end{itemize}
 }
